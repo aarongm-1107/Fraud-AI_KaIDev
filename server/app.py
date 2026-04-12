@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from env import FraudEnv
+from server.environment import FraudEnv
 from tasks.easy import transactions as easy_transactions
 
 app = FastAPI()
@@ -14,14 +14,14 @@ GLOBAL_ENV = None
 def reset():
     global GLOBAL_ENV
 
-    # Load default dataset (easy)
+    # Initialize environment
     GLOBAL_ENV = FraudEnv(easy_transactions)
-    state = GLOBAL_ENV.reset()
+    result = GLOBAL_ENV.reset()
 
     return {
-        "state": state,
-        "reward": 0,
-        "done": False
+        "state": result["state"],
+        "reward": result["reward"],
+        "done": result["done"]
     }
 
 # -------------------------------
@@ -34,9 +34,9 @@ def step(action: dict):
     result = GLOBAL_ENV.step(action["action"])
 
     return {
-        "state": result.next_state,
-        "reward": result.reward,
-        "done": result.done
+        "state": result["state"],
+        "reward": result["reward"],
+        "done": result["done"]
     }
 
 # -------------------------------

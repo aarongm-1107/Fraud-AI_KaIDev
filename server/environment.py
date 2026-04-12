@@ -1,15 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
 from typing import Any, List, Dict
-
-
-@dataclass
-class StepResult:
-    next_state: Dict[str, Any] | None
-    reward: float
-    done: bool
-    info: Dict[str, Any] = field(default_factory=dict)
-
 
 class FraudEnv:
     ACTIONS = ["approve", "flag", "block"]
@@ -29,9 +19,14 @@ class FraudEnv:
     def reset(self) -> Dict[str, Any]:
         self._index = 0
         self._total_reward = 0.0
-        return self._state
 
-    def step(self, action: int) -> StepResult:
+        return {
+            "state": self._state,
+            "reward": 0.0,
+            "done": False
+        }
+
+    def step(self, action: int) -> Dict[str, Any]:
         if action not in range(len(self.ACTIONS)):
             raise ValueError(f"action must be 0-{len(self.ACTIONS)-1}, got {action}")
 
@@ -40,12 +35,13 @@ class FraudEnv:
         self._index += 1
 
         done = self._index >= len(self._transactions)
+        next_state = None if done else self._state
 
-        return StepResult(
-            next_state=None if done else self._state,
-            reward=reward,
-            done=done,
-        )
+        return {
+            "state": next_state,
+            "reward": reward,
+            "done": done
+        }
 
     # ---------- private helpers ----------
 
