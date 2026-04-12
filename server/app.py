@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from server.environment import FraudEnv
 from tasks.easy import transactions as easy_transactions
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/docs",
+    redoc_url=None
+)
 
 GLOBAL_ENV = None
 
