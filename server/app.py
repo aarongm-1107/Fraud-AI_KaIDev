@@ -4,17 +4,19 @@ from tasks.easy import transactions as easy_transactions
 
 app = FastAPI()
 
-# Global environment (IMPORTANT)
 GLOBAL_ENV = None
 
-# -------------------------------
-# 🔁 RESET ENDPOINT
-# -------------------------------
+@app.get("/")
+def root():
+    return {
+        "status": "ok",
+        "message": "Fraud AI Environment is running"
+    }
+
 @app.post("/reset")
 def reset():
     global GLOBAL_ENV
 
-    # Initialize environment
     GLOBAL_ENV = FraudEnv(easy_transactions)
     result = GLOBAL_ENV.reset()
 
@@ -24,12 +26,12 @@ def reset():
         "done": result["done"]
     }
 
-# -------------------------------
-# 🔁 STEP ENDPOINT
-# -------------------------------
 @app.post("/step")
 def step(action: dict):
     global GLOBAL_ENV
+
+    if GLOBAL_ENV is None:
+        return {"error": "Environment not initialized. Call /reset first."}
 
     result = GLOBAL_ENV.step(action["action"])
 
@@ -39,9 +41,6 @@ def step(action: dict):
         "done": result["done"]
     }
 
-# -------------------------------
-# ❤️ HEALTH CHECK
-# -------------------------------
 @app.get("/health")
 def health():
     return {"status": "ok"}
