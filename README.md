@@ -2,7 +2,7 @@
 title: Fraud Detection RL Environment
 emoji: 💳
 colorFrom: red
-colorTo: orange
+colorTo: purple
 sdk: docker
 pinned: false
 ---
